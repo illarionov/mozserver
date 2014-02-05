@@ -1,0 +1,2 @@
+#!/bin/sh
+exec java -jar target/mozserver-1.0-SNAPSHOT.jar $@ mozserver.yml

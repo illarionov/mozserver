@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="1" author="illarionov">
+
+        <sql>CREATE EXTENSION IF NOT EXISTS postgis</sql>
+
+        <createTable tableName="cell">
+            <column name="id" type="serial" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="mcc" type="smallint" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="mnc" type="smallint" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lac" type="int" defaultValue="-1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cid" type="int" defaultValue="-1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="psc" type="smallint" defaultValue="-1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="radio" type="varchar(80)" defaultValue="gsm">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="cell_log">
+            <column name="id" type="serial" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="cell_id" type="int">
+                <constraints
+                        nullable="false"
+                        foreignKeyName="cell_fk"
+                        references="cell(id)" />
+            </column>
+            <column name="time" type="timestamp without time zone" defaultValueComputed="now()">
+                <constraints nullable="false" />
+            </column>
+            <column name="accuracy" type="real" />
+            <column name="altitude" type="real" />
+            <column name="altitude_accuracy" type="real" />
+            <column name="signal" type="smallint" defaultValue="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="ta" type="smallint" />
+
+            <column name="location" type="GEOMETRY(POINT, 3857)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="wifi_log">
+            <column name="id" type="serial" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="bssid" type="macaddr">
+                <constraints nullable="false" />
+            </column>
+            <column name="time" type="timestamp without time zone" defaultValueComputed="now()">
+                <constraints nullable="false" />
+            </column>
+            <column name="frequency" type="int" />
+            <column name="signal" type="smallint" defaultValue="0" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="location" type="GEOMETRY(POINT, 3857)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+    </changeSet>
+
+
+</databaseChangeLog>
