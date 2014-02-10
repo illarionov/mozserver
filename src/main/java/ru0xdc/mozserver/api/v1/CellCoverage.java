@@ -2,6 +2,7 @@ package ru0xdc.mozserver.api.v1;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.palominolabs.jersey.cors.Cors;
 import com.yammer.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,7 @@ public class CellCoverage {
 
     @GET
     @Timed
+    @Cors
     public double[][] get(
             @QueryParam("network_radio") Optional<String> queryRadio,
             @QueryParam("mcc") Optional<Integer> queryMcc,

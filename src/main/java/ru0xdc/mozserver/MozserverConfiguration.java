@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.DefaultValue;
 
 public class MozserverConfiguration extends Configuration {
 
@@ -15,7 +16,15 @@ public class MozserverConfiguration extends Configuration {
     @JsonProperty("database")
     private DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration();
 
+    @Valid
+    @JsonProperty("allowCors")
+    private boolean allowCors = false;
+
     public DatabaseConfiguration getDatabaseConfiguration() {
         return databaseConfiguration;
+    }
+
+    public boolean isCorsAllowed() {
+        return allowCors;
     }
 }
