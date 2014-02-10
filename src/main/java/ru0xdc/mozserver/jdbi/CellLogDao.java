@@ -28,7 +28,7 @@ public interface CellLogDao {
             );
 
 
-    @SqlQuery("SELECT round(AVG(signal)) AS signal, ST_AsEWKB(ST_Transform(ST_snaptogrid(location, 10), 4326)) AS location"
+    @SqlQuery("SELECT round(AVG(signal)) AS signal, ST_AsEWKB(ST_Transform(ST_snaptogrid(location, 30), 4326)) AS location"
             + "  FROM cell_log"
             + "  INNER JOIN cell ON cell.id=cell_log.cell_id"
             + "  WHERE "
@@ -38,7 +38,7 @@ public interface CellLogDao {
             + "       AND (CAST(:cid AS int) IS NULL OR cid=:cid)"
             + "       AND (CAST(:psc AS int) IS NULL OR psc=:psc)"
             + "       AND (CAST(:radio AS text) IS NULL OR radio=:radio)"
-            + "  GROUP BY ST_snaptogrid(location, 10)")
+            + "  GROUP BY ST_snaptogrid(location, 30)")
     @RegisterMapper(CoverageResponseRecord.Mapper.class)
     List<CoverageResponseRecord> getCoverage(
             @Bind("mcc") Optional<Integer> mcc,
