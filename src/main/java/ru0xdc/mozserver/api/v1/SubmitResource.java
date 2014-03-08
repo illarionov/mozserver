@@ -69,7 +69,7 @@ public class SubmitResource {
         List<Long> cellIds = new ArrayList<Long>();
         List<Integer> signals = new ArrayList<Integer>();
         List<Integer> timingAdvances = new ArrayList<Integer>();
-
+        List<String> networkTypes = new ArrayList<String>();
 
         for (SubmitItem item: submitItems) {
             if (item.cell == null || item.cell.isEmpty()) continue;
@@ -91,6 +91,7 @@ public class SubmitResource {
                 cellIds.add(cellId);
                 signals.add(cell.getSignalStrengthDbm());
                 timingAdvances.add(cell.getTa() != SubmitCell.UNKNOWN_SIGNAL ? cell.getTa() : null);
+                networkTypes.add(cell.getNetworkType());
             }
             if (!cellIds.isEmpty()) {
                 logDao.insertBatch(
@@ -100,18 +101,22 @@ public class SubmitResource {
                         Optional.fromNullable(item.altitude_accuracy > 0 ? item.altitude_accuracy : null),
                         item.locationAsEwkt(),
                         cellIds,
+                        networkTypes,
                         timingAdvances,
                         signals
                 );
                 cellIds.clear();
                 signals.clear();
                 timingAdvances.clear();
+                networkTypes.clear();
             }
         }
     }
 
     private void insertWifiItems(Handle jdbiHandle,  List<SubmitItem> submitItems) {
         List<String> keys = new ArrayList<String>();
+        List<String> ssids = new ArrayList<String>();
+        List<String> capabilities = new ArrayList<String>();
         List<Integer> frequencies = new ArrayList<Integer>();
         List<Integer> signals = new ArrayList<Integer>();
 
@@ -122,13 +127,17 @@ public class SubmitResource {
             java.sql.Timestamp itemTime = new java.sql.Timestamp(item.time.getTime());
             for (SubmitWifi wifi: item.wifi) {
                 keys.add(wifi.key);
+                ssids.add(wifi.ssid);
+                capabilities.add(wifi.capabilities);
                 frequencies.add(wifi.frequency > 0 ? wifi.frequency : null);
                 signals.add(wifi.signal);
             }
 
-            wifiLogDao.insertBatch(itemTime, item.locationAsEwkt(), keys, frequencies, signals);
+            wifiLogDao.insertBatch(itemTime, item.locationAsEwkt(), keys, ssids, capabilities, frequencies, signals);
 
             keys.clear();
+            ssids.clear();
+            capabilities.clear();
             frequencies.clear();
             signals.clear();
         }

@@ -81,5 +81,24 @@
 
     </changeSet>
 
+    <changeSet id="2" author="illarionov">
+        <sql>CREATE MATERIALIZED VIEW cell_coverage
+            AS SELECT cell_id, MAX(signal) AS signal, ST_snaptogrid(location, 30) AS location
+            FROM cell_log
+            GROUP BY cell_id, ST_snaptogrid(location, 30)
+        </sql>
+    </changeSet>
+
+    <changeSet id="3" author="illarionov">
+        <addColumn tableName="wifi_log">
+            <column name="ssid" type="varchar(500)"/>
+        </addColumn>
+        <addColumn tableName="wifi_log">
+            <column name="capabilities" type="varchar(500)"/>
+        </addColumn>
+        <addColumn tableName="cell_log">
+            <column name="network_type" type="varchar(20)" />
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>

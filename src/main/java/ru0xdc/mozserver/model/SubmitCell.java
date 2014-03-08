@@ -44,8 +44,10 @@ public class SubmitCell {
 
     private final int ta;
 
+    private final String networkType;
+
     public SubmitCell(String radio, int mcc, int mnc, int lac, int cid, int psc,
-                      int signal, int asu, int ta) {
+                      int signal, int asu, int ta, String networkType) {
         this.radio = radio;
         this.mcc = mcc;
         this.mnc = mnc;
@@ -55,6 +57,7 @@ public class SubmitCell {
         this.signal = signal;
         this.asu = asu;
         this.ta = ta;
+        this.networkType = networkType;
     }
 
     @JsonCreator
@@ -68,7 +71,8 @@ public class SubmitCell {
           props.containsKey("psc") ? (Integer)props.get("psc") :  UNKNOWN_IDENT,
           props.containsKey("signal") ? (Integer)props.get("signal") :  UNKNOWN_SIGNAL,
           props.containsKey("asu") ? (Integer)props.get("asu") :  UNKNOWN_SIGNAL,
-          props.containsKey("ta") ? (Integer)props.get("ta") :  UNKNOWN_SIGNAL
+          props.containsKey("ta") ? (Integer)props.get("ta") :  UNKNOWN_SIGNAL,
+          (String)props.get("network_type")
         );
     }
 
@@ -135,6 +139,8 @@ public class SubmitCell {
         return asu;
     }
 
+    public String getNetworkType() {return networkType; }
+
     public boolean hasEnoughFields() {
         return (mcc != UNKNOWN_IDENT)
                 && (mnc != UNKNOWN_IDENT)
@@ -147,6 +153,7 @@ public class SubmitCell {
         Map<String, String> parts = new HashMap<String, String>(10);
 
         if (!Strings.isNullOrEmpty(radio)) parts.put("radio", radio);
+        if (!Strings.isNullOrEmpty(networkType)) parts.put("type", networkType);
         if (mcc != UNKNOWN_IDENT) parts.put("mcc", String.valueOf(mcc));
         if (mnc != UNKNOWN_IDENT) parts.put("mnc", String.valueOf(mnc));
         if (lac != UNKNOWN_IDENT) parts.put("lac", String.valueOf(lac));
@@ -156,6 +163,7 @@ public class SubmitCell {
         if (signal != UNKNOWN_SIGNAL) parts.put("signal", String.valueOf(signal));
         if (asu != UNKNOWN_SIGNAL) parts.put("asu", String.valueOf(asu));
         if (ta != UNKNOWN_SIGNAL) parts.put("ta", String.valueOf(ta));
+
 
         if (getSignalStrengthDbm() != UNKNOWN_SIGNAL) parts.put("getSignalStrengthDbm", String.valueOf(getSignalStrengthDbm()));
 
