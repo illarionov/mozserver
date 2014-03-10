@@ -23,7 +23,7 @@ public class SubmitItem {
 
     public float accuracy = -1;
 
-    public float altiude = Float.NEGATIVE_INFINITY;
+    public float altitude = Float.NEGATIVE_INFINITY;
 
     public float altitude_accuracy = Float.NEGATIVE_INFINITY;
 

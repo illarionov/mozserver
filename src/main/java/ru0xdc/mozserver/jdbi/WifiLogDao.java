@@ -14,12 +14,14 @@ import java.util.List;
 public interface WifiLogDao {
 
     @SqlBatch("insert into wifi_log "
-            + "(bssid, ssid, capabilities, time, frequency, signal, location) "
-            + "values (macaddr(:bssid), :ssid, :capabilities, :time, :frequency, :signal, ST_Transform(ST_GeomFromEWKT(:ewkt), 3857))"
+            + "(bssid, ssid, capabilities, time, frequency, signal, accuracy, altitude, location) "
+            + "values (macaddr(:bssid), :ssid, :capabilities, :time, :frequency, :signal, :accuracy, :altitude, ST_Transform(ST_GeomFromEWKT(:ewkt), 3857))"
     )
     void insertBatch(
             @Bind("time") java.sql.Timestamp datetime,
             @Bind("ewkt") String locationEwkt,
+            @Bind("accuracy") Optional<Float> accuracy,
+            @Bind("altitude") Optional<Float> altitude,
             @Bind("bssid") List<String> bssids,
             @Bind("ssid") List<String> ssids,
             @Bind("capabilities") List<String> capabilities,
@@ -28,12 +30,14 @@ public interface WifiLogDao {
 
 
     @SqlUpdate("insert into wifi_log "
-            + "(bssid, ssid, capabilities, time, frequency, signal, location) "
-            + "values (macaddr(:bssid), :ssid, :capabilities, :time, :frequency, :signal, ST_Transform(ST_GeomFromEWKT(:ewkt), 3857))"
+            + "(bssid, ssid, capabilities, time, frequency, signal, accuracy, altitude, location) "
+            + "values (macaddr(:bssid), :ssid, :capabilities, :time, :frequency, :signal, :accuracy, :altitude, ST_Transform(ST_GeomFromEWKT(:ewkt), 3857))"
     )
     void insert(
             @Bind("time") java.sql.Timestamp datetime,
             @Bind("ewkt") String locationEwkt,
+            @Bind("accuracy") Float accuracy,
+            @Bind("altitude") Float altitude,
             @Bind("bssid") String bssid,
             @Bind("ssid") String ssid,
             @Bind("capabilities") String capabilities,

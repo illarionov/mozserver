@@ -97,7 +97,7 @@ public class SubmitResource {
                 logDao.insertBatch(
                         itemTime,
                         Optional.fromNullable(item.accuracy > 0 ? item.accuracy : null),
-                        Optional.fromNullable(item.altiude != Float.NEGATIVE_INFINITY ? item.altiude : null),
+                        Optional.fromNullable(item.altitude != Float.NEGATIVE_INFINITY ? item.altitude : null),
                         Optional.fromNullable(item.altitude_accuracy > 0 ? item.altitude_accuracy : null),
                         item.locationAsEwkt(),
                         cellIds,
@@ -133,7 +133,15 @@ public class SubmitResource {
                 signals.add(wifi.signal);
             }
 
-            wifiLogDao.insertBatch(itemTime, item.locationAsEwkt(), keys, ssids, capabilities, frequencies, signals);
+            wifiLogDao.insertBatch(itemTime,
+                    item.locationAsEwkt(),
+                    Optional.fromNullable(item.accuracy > 0 ? item.accuracy: null),
+                    Optional.fromNullable(item.altitude == Float.NEGATIVE_INFINITY ? null : item.altitude),
+                    keys,
+                    ssids,
+                    capabilities,
+                    frequencies,
+                    signals);
 
             keys.clear();
             ssids.clear();

@@ -101,4 +101,11 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="4" author="illarionov">
+        <addColumn tableName="wifi_log">
+            <column name="accuracy" type="real" />
+            <column name="altitude" type="real" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
