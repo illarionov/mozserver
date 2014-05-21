@@ -38,10 +38,11 @@ public class CellCoverage {
             @QueryParam("mnc") Optional<Integer> queryMnc,
             @QueryParam("lac") Optional<Integer> queryLac,
             @QueryParam("cid") Optional<Integer> queryCid,
-            @QueryParam("psc") Optional<Integer> queryPsc) {
+            @QueryParam("psc") Optional<Integer> queryPsc,
+			@QueryParam("rnc") Optional<Integer> queryRnc) {
 
         List<CoverageResponseRecord> coverateResponse = mCellLogDao.getCoverage(queryMcc, queryMnc,
-                queryLac, queryCid, queryPsc, queryRadio);
+                queryLac, queryCid, queryPsc, queryRnc, queryRadio);
 
         ArrayList<double[]> coverage = new ArrayList<double[]>(coverateResponse.size());
         for (CoverageResponseRecord r: coverateResponse) coverage.add(r.vec3d());

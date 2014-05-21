@@ -35,6 +35,7 @@ public interface CellLogDao {
             + "       AND (CAST(:lac AS int) IS NULL OR lac=:lac)"
             + "       AND (CAST(:cid AS int) IS NULL OR cid=:cid)"
             + "       AND (CAST(:psc AS int) IS NULL OR psc=:psc)"
+			+ "       AND (CAST(:rnc AS int) IS NULL OR (cid >> 16) & CAST(x'ffff' AS int) = :rnc)"
             + "       AND (CAST(:radio AS text) IS NULL OR radio=:radio)"
             + "  GROUP BY location")
     @RegisterMapper(CoverageResponseRecord.Mapper.class)
@@ -44,6 +45,7 @@ public interface CellLogDao {
             @Bind("lac") Optional<Integer> lac,
             @Bind("cid") Optional<Integer> cid,
             @Bind("psc") Optional<Integer> psc,
+			@Bind("rnc") Optional<Integer> rnc,
             @Bind("radio") Optional<String> radio
     );
 
