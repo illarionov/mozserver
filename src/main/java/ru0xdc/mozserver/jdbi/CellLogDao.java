@@ -3,11 +3,14 @@ package ru0xdc.mozserver.jdbi;
 import com.google.common.base.Optional;
 import org.skife.jdbi.v2.sqlobject.*;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
+import org.skife.jdbi.v2.util.StringMapper;
 
 import java.util.List;
 
 
 public interface CellLogDao {
+
+	static final int COVERAGE_HULL_BUFFER = 200;
 
     @SqlBatch("insert into cell_log "
             + "(cell_id, network_type, time, accuracy, altitude, altitude_accuracy, signal, ta, location) "
@@ -24,7 +27,6 @@ public interface CellLogDao {
             @Bind("ta") List<Integer> timingAdvances,
             @Bind("signal") List<Integer> signals
             );
-
 
     @SqlQuery("SELECT MAX(signal) AS signal, ST_AsEWKB(ST_Transform(location, 4326)) AS location"
             + "  FROM cell_coverage"
@@ -48,6 +50,28 @@ public interface CellLogDao {
 			@Bind("rnc") Optional<Integer> rnc,
             @Bind("radio") Optional<String> radio
     );
+
+	@SqlQuery("SELECT ST_AsGeoJSON( ST_Transform(ST_Buffer(ST_ConcaveHull(ST_Collect(location), 1, false), " + COVERAGE_HULL_BUFFER + "), 4326) )"
+			+ "  FROM cell_coverage"
+			+ "  INNER JOIN cell ON cell.id=cell_coverage.cell_id"
+			+ "  WHERE "
+			+ "    (CAST(:mcc AS int) IS NULL OR mcc=:mcc)"
+			+ "       AND (CAST(:mnc AS int) IS NULL OR mnc=:mnc)"
+			+ "       AND (CAST(:lac AS int) IS NULL OR lac=:lac)"
+			+ "       AND (CAST(:cid AS int) IS NULL OR cid=:cid)"
+			+ "       AND (CAST(:psc AS int) IS NULL OR psc=:psc)"
+			+ "       AND (CAST(:rnc AS int) IS NULL OR (cid >> 16) & CAST(x'ffff' AS int) = :rnc)"
+			+ "       AND (CAST(:radio AS text) IS NULL OR radio=:radio)"
+	)
+	String getCoverageHull(
+			@Bind("mcc") Optional<Integer> mcc,
+			@Bind("mnc") Optional<Integer> mnc,
+			@Bind("lac") Optional<Integer> lac,
+			@Bind("cid") Optional<Integer> cid,
+			@Bind("psc") Optional<Integer> psc,
+			@Bind("rnc") Optional<Integer> rnc,
+			@Bind("radio") Optional<String> radio
+	);
 
     @SqlCall("REFRESH MATERIALIZED VIEW cell_coverage")
     void refreshCoverage();
