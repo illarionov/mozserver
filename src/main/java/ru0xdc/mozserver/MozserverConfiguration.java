@@ -20,6 +20,10 @@ public class MozserverConfiguration extends Configuration {
     @JsonProperty("allowCors")
     private boolean allowCors = false;
 
+	@Valid
+	@JsonProperty("mozLocServicesKey")
+	private String mMozLocServicesKey = "test";
+
     public DatabaseConfiguration getDatabaseConfiguration() {
         return databaseConfiguration;
     }
@@ -27,4 +31,9 @@ public class MozserverConfiguration extends Configuration {
     public boolean isCorsAllowed() {
         return allowCors;
     }
+
+	public String getMozLocServicesKey() {
+		return mMozLocServicesKey;
+	}
+
 }

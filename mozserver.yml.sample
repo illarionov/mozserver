@@ -1,4 +1,5 @@
 allowCors: false
+mozLocServicesKey: test
 
 database:
   # the name of your JDBC driver

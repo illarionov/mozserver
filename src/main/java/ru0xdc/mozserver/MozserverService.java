@@ -14,10 +14,7 @@ import com.yammer.dropwizard.jdbi.DBIFactory;
 import com.yammer.dropwizard.jdbi.bundles.DBIExceptionsBundle;
 import com.yammer.dropwizard.migrations.MigrationsBundle;
 import org.skife.jdbi.v2.DBI;
-import ru0xdc.mozserver.api.v1.CellCoverage;
-import ru0xdc.mozserver.api.v1.CellResource;
-import ru0xdc.mozserver.api.v1.RefreshCoverageTask;
-import ru0xdc.mozserver.api.v1.SubmitResource;
+import ru0xdc.mozserver.api.v1.*;
 import ru0xdc.mozserver.jdbi.CellDao;
 import ru0xdc.mozserver.jdbi.CellLogDao;
 
@@ -64,6 +61,7 @@ public class MozserverService extends Service<MozserverConfiguration> {
         environment.addResource(new SubmitResource(jdbi));
         environment.addResource(new CellResource(cellDao));
         environment.addResource(new CellCoverage(cellLogDao));
+		environment.addResource(new CellLocation(configuration));
         environment.addResource(new DBIExceptionsBundle());
         environment.addTask(new RefreshCoverageTask(cellLogDao));
 
