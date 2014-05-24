@@ -28,13 +28,13 @@ public class CellLocationMozillaRequest {
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public static class Cell {
-		String radio;
-		int mcc;
-		int mnc;
-		int lac;
-		int cid;
-		Integer psc;
-		Integer asu;
+		public String radio;
+		public int mcc;
+		public int mnc;
+		public int lac;
+		public int cid;
+		public Integer psc;
+		public Integer asu;
 	}
 
 
