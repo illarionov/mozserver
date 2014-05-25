@@ -64,6 +64,7 @@ public class MozserverService extends Service<MozserverConfiguration> {
 		environment.addResource(new CellLocation(configuration));
         environment.addResource(new DBIExceptionsBundle());
         environment.addTask(new RefreshCoverageTask(cellLogDao));
+		environment.addTask(new ImportCsvTask(cellDao, cellLogDao));
 
     }
 
