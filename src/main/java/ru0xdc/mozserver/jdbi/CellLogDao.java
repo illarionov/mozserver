@@ -1,6 +1,7 @@
 package ru0xdc.mozserver.jdbi;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 import org.skife.jdbi.v2.sqlobject.*;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.util.StringMapper;
@@ -11,6 +12,7 @@ import java.util.List;
 public interface CellLogDao {
 
 	static final int COVERAGE_HULL_BUFFER = 200;
+	static final int CELLS_AT_LAT_LON_RADIUS = 30;
 
     @SqlBatch("insert into cell_log "
             + "(cell_id, network_type, time, accuracy, altitude, altitude_accuracy, signal, ta, location) "
@@ -64,6 +66,34 @@ public interface CellLogDao {
 			+ "       AND (CAST(:radio AS text) IS NULL OR radio=:radio)"
 	)
 	String getCoverageHull(
+			@Bind("mcc") Optional<Integer> mcc,
+			@Bind("mnc") Optional<Integer> mnc,
+			@Bind("lac") Optional<Integer> lac,
+			@Bind("cid") Optional<Integer> cid,
+			@Bind("psc") Optional<Integer> psc,
+			@Bind("rnc") Optional<Integer> rnc,
+			@Bind("radio") Optional<String> radio
+	);
+
+
+	@SqlQuery("SELECT cell.mcc, cell.mnc, cell.lac, cell.cid, cell.psc, cell.radio, MAX(signal) AS signal "
+	        + " FROM cell_coverage inner join cell on cell.id=cell_coverage.cell_id"
+			+ " WHERE ST_DWITHIN(location, "
+			+ " ST_Transform(ST_SetSRID(ST_MakePoint(:lon, :lat),4326), 3857), "
+			+   CELLS_AT_LAT_LON_RADIUS + ")"
+			+ "       AND (CAST(:mcc AS int) IS NULL OR mcc=:mcc)"
+			+ "       AND (CAST(:mnc AS int) IS NULL OR mnc=:mnc)"
+			+ "       AND (CAST(:lac AS int) IS NULL OR lac=:lac)"
+			+ "       AND (CAST(:cid AS int) IS NULL OR cid=:cid)"
+			+ "       AND (CAST(:psc AS int) IS NULL OR psc=:psc)"
+			+ "       AND (CAST(:rnc AS int) IS NULL OR (cid >> 16) & CAST(x'ffff' AS int) = :rnc)"
+			+ "       AND (CAST(:radio AS text) IS NULL OR radio=:radio)"
+			+ " GROUP BY cell.id"
+			+ " ORDER BY cell.mcc, cell.mnc, cell.radio, cell.lac, signal DESC")
+	@RegisterMapper(CellsAtLatLonResponseRecord.Mapper.class)
+	List<CellsAtLatLonResponseRecord> getCellsAtLatLon(
+			@Bind("lat") double lat,
+			@Bind("lon") double lon,
 			@Bind("mcc") Optional<Integer> mcc,
 			@Bind("mnc") Optional<Integer> mnc,
 			@Bind("lac") Optional<Integer> lac,

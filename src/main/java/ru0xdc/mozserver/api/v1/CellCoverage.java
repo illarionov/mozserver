@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Entity;
 import ru0xdc.mozserver.jdbi.CellDao;
 import ru0xdc.mozserver.jdbi.CellLogDao;
+import ru0xdc.mozserver.jdbi.CellsAtLatLonResponseRecord;
 import ru0xdc.mozserver.jdbi.CoverageResponseRecord;
 import ru0xdc.mozserver.model.Cell;
 import ru0xdc.mozserver.model.SubmitCell;
@@ -67,6 +68,25 @@ public class CellCoverage {
 				queryLac, queryCid, queryPsc, queryRnc, queryRadio);
 
 		return Response.ok().entity(json).build();
-
 	}
+
+
+	@GET @Path("/point")
+	@Timed
+	@Cors
+	public List<CellsAtLatLonResponseRecord> getCellsAtPoint(
+			@QueryParam("lat") double queryLat,
+			@QueryParam("lon") double queryLon,
+			@QueryParam("network_radio") Optional<String> queryRadio,
+			@QueryParam("mcc") Optional<Integer> queryMcc,
+			@QueryParam("mnc") Optional<Integer> queryMnc,
+			@QueryParam("lac") Optional<Integer> queryLac,
+			@QueryParam("cid") Optional<Integer> queryCid,
+			@QueryParam("psc") Optional<Integer> queryPsc,
+			@QueryParam("rnc") Optional<Integer> queryRnc
+	) {
+		return mCellLogDao.getCellsAtLatLon(queryLat, queryLon, queryMcc, queryMnc, queryLac,
+				queryCid, queryPsc, queryRnc, queryRadio);
+	}
+
 }
